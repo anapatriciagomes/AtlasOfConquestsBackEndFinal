@@ -57,7 +57,7 @@
 {
   email: String,
   password: String,
-  visited: [{type: Schema.Types.ObjectId, ref: 'Visited'}]
+  visited: [{type: Schema.Types.ObjectId, ref: 'Visited'}],
   wishlist: [{type: Schema.Types.ObjectId, ref: 'Wishlist'}]
 }
 ```
