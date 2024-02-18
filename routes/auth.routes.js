@@ -4,6 +4,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User.model');
 const Visited = require('../models/Visited.model.js');
+const Wishlist = require('../models/Wishlist.model.js');
 const { isAuthenticated } = require('../middleware/jwt.middleware');
 
 const saltRounds = 10;
@@ -147,7 +148,7 @@ router.put('/users/:userId', async (req, res, next) => {
     const updatedUser = await User.findByIdAndUpdate(
       userId,
       {
-        email: req.body.email,
+        email,
         password: hashedPassword,
       },
       { new: true }
