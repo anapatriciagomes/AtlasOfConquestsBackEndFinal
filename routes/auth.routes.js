@@ -1,4 +1,5 @@
 const router = require('express').Router();
+const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User.model');
@@ -98,6 +99,33 @@ router.get('/verify', isAuthenticated, (req, res, next) => {
   res.json(req.payload);
 });
 
+router.get('/users/:userId', async (req, res, next) => {
+  const { userId } = req.params;
+
+  try {
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({ message: 'Id is not valid' });
+    }
+
+    const user = await User.findById(userId)
+      .populate('visited')
+      .populate('wishlist');
+
+    if (!user) {
+      return res.status(404).json({ message: 'No user was found' });
+    }
+
+    const { email, _id, visited, wishlist } = user;
+
+    const responseData = { email, _id, visited, wishlist };
+
+    res.json(responseData);
+  } catch (error) {
+    console.log('Error fetching user', error);
+    next(error);
+  }
+});
+
 router.put('/users/:userId', async (req, res, next) => {
   const { email, password } = req.body;
   const { userId } = req.params;
@@ -138,6 +166,7 @@ router.delete('/users/:userId', async (req, res, next) => {
 
   try {
     await Visited.deleteMany({ userId });
+    await Wishlist.deleteMany({ userId });
 
     const deletedUser = await User.findByIdAndDelete(userId);
 

@@ -11,6 +11,11 @@ router.post('/wishlist', async (req, res, next) => {
       country,
       userId,
     });
+
+    await User.findByIdAndUpdate(userId, {
+      $push: { wishlist: newWishlist },
+    });
+
     console.log('New Wishlist', newWishlist);
     res.json(newWishlist);
   } catch (error) {

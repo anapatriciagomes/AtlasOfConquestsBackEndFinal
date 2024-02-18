@@ -11,6 +11,11 @@ router.post('/visited', async (req, res, next) => {
       country,
       userId,
     });
+
+    await User.findByIdAndUpdate(userId, {
+      $push: { visited: newVisited },
+    });
+
     console.log('New Visited', newVisited);
     res.json(newVisited);
   } catch (error) {

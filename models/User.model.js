@@ -14,6 +14,8 @@ const userSchema = new Schema(
       type: String,
       required: [true, 'Password is required.'],
     },
+    visited: [{ type: Schema.Types.ObjectId, ref: 'Visited' }],
+    wishlist: [{ type: Schema.Types.ObjectId, ref: 'Wishlist' }],
   },
   {
     // this second object adds extra properties: `createdAt` and `updatedAt`
