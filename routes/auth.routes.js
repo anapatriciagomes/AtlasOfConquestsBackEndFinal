@@ -64,7 +64,9 @@ router.post('/login', async (req, res, next) => {
       return res.status(400).json({ message: 'All fields are mandatory' });
     }
 
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email })
+      .populate('visited')
+      .populate('wishlist');
 
     if (!user) {
       return res
@@ -75,7 +77,12 @@ router.post('/login', async (req, res, next) => {
     const isPasswordCorrect = bcrypt.compareSync(password, user.password);
 
     if (isPasswordCorrect) {
-      const payload = { _id: user._id, email: user.email };
+      const payload = {
+        _id: user._id,
+        email: user.email,
+        visited: user.visited,
+        wishlist: user.wishlist,
+      };
 
       const authToken = jwt.sign(payload, process.env.TOKEN_SECRET, {
         algorithm: 'HS256',
