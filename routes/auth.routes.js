@@ -164,7 +164,7 @@ router.put('/users/:userId', async (req, res, next) => {
     console.log('Updated User', updatedUser);
     res.json(updatedUser);
   } catch (error) {
-    console.log('Error creating the user', error);
+    console.log('Error changing password', error);
     next(error);
   }
 });
