@@ -14,6 +14,7 @@ const userSchema = new Schema(
       type: String,
       required: [true, 'Password is required.'],
     },
+    resetLink: { type: String, default: '' },
     visited: [{ type: Schema.Types.ObjectId, ref: 'Visited' }],
     wishlist: [{ type: Schema.Types.ObjectId, ref: 'Wishlist' }],
   },

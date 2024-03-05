@@ -189,4 +189,99 @@ router.delete('/users/:userId', async (req, res, next) => {
   }
 });
 
+router.put('/forgot-password', async (req, res, next) => {
+  if (process.env.GOOGLE_APP_EMAIL && process.env.GOOGLE_APP_PW) {
+    const email = req.body.email;
+
+    try {
+      const user = await User.findOne({ email });
+
+      if (!user) {
+        return res
+          .status(400)
+          .json({ error: 'User with this email does not exist' });
+      }
+
+      const token = jwt.sign({ _id: user._id }, process.env.TOKEN_SECRET, {
+        expiresIn: '30m',
+      });
+
+      let transporter = nodemailer.createTransport({
+        host: 'smtp.gmail.com',
+        port: 465,
+        secure: true,
+        auth: {
+          user: process.env.GOOGLE_APP_EMAIL,
+          pass: process.env.GOOGLE_APP_PW,
+        },
+      });
+
+      const data = {
+        from: {
+          name: 'AppliSnap',
+          address: process.env.GOOGLE_APP_EMAIL,
+        },
+        to: email,
+        subject: 'Reset Account Password Link',
+        html: `
+        <h3>Please click the link below to reset your password</h3>
+        <p>${process.env.CLIENT_URL}/reset-password/${token}</p>
+        `,
+      };
+
+      await user.updateOne({ resetLink: token });
+
+      await transporter.sendMail(data);
+
+      return res.status(200).json({
+        message:
+          'Please check your email inbox and spam, you will receive a reset link in the next few minutes',
+      });
+    } catch (error) {
+      next(error);
+      return res.status(400).json({ error: 'Reset password link error' });
+    }
+  } else {
+    return res.status(400).json({
+      error:
+        'You have not set up an account to send an email or a reset password key for jwt',
+    });
+  }
+});
+
+router.put('/reset-password', async (req, res, next) => {
+  const { token, password } = req.body;
+  console.log('Received Token:', token);
+  try {
+    const decodedToken = jwt.verify(token, process.env.TOKEN_SECRET);
+    const user = await User.findOne({ resetLink: token });
+
+    if (!user || !decodedToken) {
+      return res.status(400).json({ error: 'Invalid or expired token' });
+    }
+
+    const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/;
+
+    if (!passwordRegex.test(password)) {
+      return res.status(400).json({
+        message:
+          'Password must have at least 8 characters, must contain at least 1 uppercase letter, 1 lowercase letter, and 1 number.',
+      });
+    }
+
+    const salt = bcrypt.genSaltSync(saltRounds);
+
+    const hashedPassword = bcrypt.hashSync(password, salt);
+
+    user.password = hashedPassword;
+    user.resetLink = undefined;
+    await user.save();
+
+    return res.status(200).json({ message: 'Your password has been changed' });
+  } catch (error) {
+    console.error(error);
+    return res.status(400).json({ error: 'Reset Password Error' });
+  }
+});
+
 module.exports = router;
