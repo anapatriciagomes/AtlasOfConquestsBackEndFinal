@@ -218,7 +218,7 @@ router.put('/forgot-password', async (req, res, next) => {
 
       const data = {
         from: {
-          name: 'AppliSnap',
+          name: 'Atlas Of Conquests',
           address: process.env.GOOGLE_APP_EMAIL,
         },
         to: email,
