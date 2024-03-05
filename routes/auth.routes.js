@@ -6,6 +6,7 @@ const User = require('../models/User.model');
 const Visited = require('../models/Visited.model.js');
 const Wishlist = require('../models/Wishlist.model.js');
 const { isAuthenticated } = require('../middleware/jwt.middleware');
+const nodemailer = require('nodemailer');
 
 const saltRounds = 10;
 
