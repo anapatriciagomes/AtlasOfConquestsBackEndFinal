@@ -22,14 +22,16 @@
 
 ### Auth Routes
 
-| Method | Route               | Description          |
-| ------ | ------------------- | -------------------- |
-| POST   | /auth/signup        | Creates a new user   |
-| POST   | /auth/login         | Logs the user        |
-| GET    | /auth/verify        | Verifies the JWT     |
-| GET    | /auth/users/:userId | Get user details     |
-| PUT    | /auth/users/:userId | Change user password |
-| DELETE | /auth/users/:userId | Delete user account  |
+| Method | Route                 | Description          |
+| ------ | --------------------- | -------------------- |
+| POST   | /auth/signup          | Creates a new user   |
+| POST   | /auth/login           | Logs the user        |
+| GET    | /auth/verify          | Verifies the JWT     |
+| GET    | /auth/users/:userId   | Get user details     |
+| PUT    | /auth/users/:userId   | Change user password |
+| PUT    | /auth/forgot-password | Forgot Password      |
+| PUT    | /auth/reset-password  | Reset Password       |
+| DELETE | /auth/users/:userId   | Delete user account  |
 
 ## Models
 
@@ -57,6 +59,7 @@
 {
   email: String,
   password: String,
+  resetLink: String,
   visited: [{type: Schema.Types.ObjectId, ref: 'Visited'}],
   wishlist: [{type: Schema.Types.ObjectId, ref: 'Wishlist'}]
 }
