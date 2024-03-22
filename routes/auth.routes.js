@@ -94,7 +94,9 @@ router.post('/login', async (req, res, next) => {
         .status(200)
         .json({ authToken, userId: payload._id, email: payload.email });
     } else {
-      return res.status(401).json({ message: 'Unable to authenticate user' });
+      return res.status(401).json({
+        message: 'Unable to authenticate user, password is not correct.',
+      });
     }
   } catch (error) {
     console.log('An error occurred login in the user', error);
