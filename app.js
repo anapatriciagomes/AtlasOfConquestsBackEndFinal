@@ -32,6 +32,9 @@ app.use('/auth', authRoutes);
 const pexelsRoutes = require('./routes/pexels.routes');
 app.use('/pexels', pexelsRoutes);
 
+const weatherRoutes = require('./routes/weather.routes');
+app.use('/weather', weatherRoutes);
+
 // ❗ To handle errors. Routes that don't exist or errors that you handle in specific routes
 require('./error-handling')(app);
 
